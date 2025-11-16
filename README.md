@@ -12,25 +12,30 @@ Users can **train models on demand** directly from the frontend, choose between 
 
 ## 🚀 Features
 
-### ✅ **1. Train ML Models with One Click**
+### ✅ 1. Train ML Models with One Click
 Users can select:
 
 - Random Forest  
 - SVM  
 - Naive Bayes  
 - Logistic Regression  
-- OR multiple algorithms → automatically trains **Ensemble Model**
+- OR multiple algorithms → automatically trains **Ensemble Model**  
+- Optionally include the **TCG Model** for more advanced predictions
 
-### ✅ **2. Live Training Feedback**
+### ✅ 2. Live Training Feedback
 After training, the API returns:
 
 - 📈 Accuracy  
 - ⏱️ Training time  
 - 🧾 Classification report  
-- 🖼️ Confusion matrix image  
+- 🖼️ Confusion matrix image (`chart.png`)  
 - ✔️ Success message
 
-### ✅ **3. Real-Time Prediction**
+The `chart.png` visualizes the confusion matrix for the trained model.  
+
+The `model.png` shows all four model performances together (Random Forest, Naive Bayes, SVM, Logistic Regression) and highlights the confusion matrix comparison.
+
+### ✅ 3. Real-Time Prediction
 Users can input:
 
 - Advertising Spend  
@@ -43,6 +48,8 @@ The system returns the predicted sales category:
 - **Medium**  
 - **High**
 
-### ✅ **4. Persistent Model Storage**
+---
+
+### ✅ 4. Persistent Model Storage
 After training, the selected model is saved as:
 
