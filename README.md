@@ -33,7 +33,7 @@ The `chart.png` visualizes the confusion matrix for the trained model. The `mode
 ![Confusion Matrix](chart.png)
 *Confusion Matrix Visualization*
 
-![Model Comparison](model.png)
+![Model Comparison](models.png)
 *All Models Performance Comparison*
 
 ### ✅ 3. Real-Time Prediction
