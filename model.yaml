@@ -1,0 +1,25 @@
+
+and reused for predictions.
+
+### ✅ **5. Clean API + CORS Enabled**
+Frontend apps can communicate with Flask seamlessly.
+
+---
+
+# 🧠 Machine Learning Overview
+
+### 🔬 Supported Algorithms  
+Implemented via `model.py`:
+
+- **Random Forest Classifier**  
+- **Support Vector Machine (SVM)**  
+- **Naive Bayes Classifier**  
+- **Logistic Regression**
+
+### 🤖 Ensemble Support  
+If more than one algorithm is selected, the backend automatically builds an **ensemble model**, combining predictions for higher accuracy.
+
+---
+
+# 📁 Project Structure
+
