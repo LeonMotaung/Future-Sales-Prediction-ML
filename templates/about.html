@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white p-8 rounded-xl shadow-xl max-w-2xl mx-auto">
+  <h2 class="text-3xl font-bold mb-4 text-center">About This Project</h2>
+  <p class="text-gray-700">
+    This project utilizes a machine learning model to predict future sales based on advertising budgets for TV, radio, and newspapers.
+    The model is trained on a dataset of past advertising expenditures and their corresponding sales outcomes.
+  </p>
+  <p class="text-gray-700 mt-4">
+    The front-end is built with HTML and Tailwind CSS, and it communicates with a Flask back-end.
+    The back-end serves the machine learning model and provides predictions via a REST API.
+  </p>
+</div>
+{% endblock %}

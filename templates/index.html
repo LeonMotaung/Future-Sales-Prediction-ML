@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- Training Section -->
+    <div class="bg-white p-8 rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold mb-6 text-center">1. Train a Model</h2>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Choose Algorithm(s) (Select multiple for an ensemble):</label>
+            <div id="algorithm-list" class="grid grid-cols-2 gap-4">
+                <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" name="algorithm" value="random_forest" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <span class="ml-3 text-sm font-medium text-gray-700">Random Forest</span>
+                </label>
+                <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" name="algorithm" value="svm" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <span class="ml-3 text-sm font-medium text-gray-700">SVM</span>
+                </label>
+                <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" name="algorithm" value="naive_bayes" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <span class="ml-3 text-sm font-medium text-gray-700">Naive Bayes</span>
+                </label>
+                <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" name="algorithm" value="logistic_regression" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <span class="ml-3 text-sm font-medium text-gray-700">Logistic Regression</span>
+                </label>
+                <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" name="algorithm" value="tcg" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <span class="ml-3 text-sm font-medium text-gray-700">TCG</span>
+                </label>
+            </div>
+        </div>
+
+        <button onclick="trainModel()" class="bg-blue-600 text-white w-full p-3 rounded-lg font-semibold hover:bg-blue-700 transition">Train Model</button>
+
+        <div id="training-results" class="mt-6 space-y-4"></div>
+    </div>
+
+    <!-- Prediction Section -->
+    <div class="bg-white p-8 rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold mb-6 text-center">2. Make a Prediction</h2>
+        
+        <div class="space-y-4">
+            <div>
+                <label for="advertising_spend" class="block text-sm font-medium text-gray-700">Advertising Spend ($)</label>
+                <input id="advertising_spend" class="w-full border p-3 mt-1 rounded-lg" type="number" placeholder="e.g., 50.5" />
+            </div>
+            <div>
+                <label for="promotions" class="block text-sm font-medium text-gray-700">Is there a promotion?</label>
+                <select id="promotions" class="w-full border p-3 mt-1 rounded-lg bg-gray-50">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div>
+                <label for="holidays" class="block text-sm font-medium text-gray-700">Is it a holiday?</label>
+                <select id="holidays" class="w-full border p-3 mt-1 rounded-lg bg-gray-50">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+        </div>
+
+        <button onclick="predict()" class="bg-green-600 text-white w-full p-3 mt-6 rounded-lg font-semibold hover:bg-green-700 transition">Predict</button>
+
+        <p id="prediction-result" class="text-center mt-6 text-lg font-semibold"></p>
+    </div>
+</div>
+
+<script>
+    const resultsDiv = document.getElementById("training-results");
+    const predictionResultEl = document.getElementById("prediction-result");
+
+    function showLoading(message) {
+        resultsDiv.innerHTML = `<div class="text-center p-4 bg-gray-100 rounded-lg">
+            <p class="font-semibold">${message}</p>
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mt-2"></div>
+        </div>`;
+    }
+
+    function showError(element, message) {
+        element.innerHTML = `<div class="text-center p-4 bg-red-100 text-red-700 rounded-lg">
+            <p class="font-bold">Error</p>
+            <p>${message}</p>
+        </div>`;
+    }
+
+    function formatReport(report) {
+        let table = '<table class="w-full text-sm text-left text-gray-500 mt-2">';
+        table += '<thead class="text-xs text-gray-700 uppercase bg-gray-50">';
+        table += '<tr><th scope="col" class="py-3 px-6">Class</th><th scope="col" class="py-3 px-6">Precision</th><th scope="col" class="py-3 px-6">Recall</th><th scope="col" class="py-3 px-6">F1-Score</th><th scope="col" class="py-3 px-6">Support</th></tr>';
+        table += '</thead><tbody>';
+
+        for (const key in report) {
+            if (typeof report[key] === 'object') {
+                const { precision, recall, 'f1-score': f1, support } = report[key];
+                table += `<tr class="bg-white border-b">
+                    <td class="py-4 px-6 font-medium text-gray-900">${key}</td>
+                    <td class="py-4 px-6">${precision.toFixed(2)}</td>
+                    <td class="py-4 px-6">${recall.toFixed(2)}</td>
+                    <td class="py-4 px-6">${f1.toFixed(2)}</td>
+                    <td class="py-4 px-6">${support}</td>
+                </tr>`;
+            }
+        }
+        table += '</tbody></table>';
+        return table;
+    }
+
+    async function trainModel() {
+        const selectedAlgorithms = Array.from(document.querySelectorAll('input[name="algorithm"]:checked')).map(el => el.value);
+        
+        if (selectedAlgorithms.length === 0) {
+            showError(resultsDiv, "Please select at least one algorithm to train.");
+            return;
+        }
+
+        showLoading("Training model... Please wait.");
+
+        try {
+            const res = await fetch("/train", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ algorithms: selectedAlgorithms })
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || 'Something went wrong');
+            }
+
+            const data = await res.json();
+            
+            resultsDiv.innerHTML = `
+                <div class="p-4 bg-green-100 text-green-800 rounded-lg text-center">
+                    <p class="font-bold">${data.message}</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <p class="text-sm text-gray-500">Accuracy</p>
+                        <p class="text-2xl font-bold">${(data.accuracy * 100).toFixed(0)}%</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <p class="text-sm text-gray-500">Training Time</p>
+                        <p class="text-2xl font-bold">${data.training_time}s</p>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-bold mt-4">Classification Report</h3>
+                    ${formatReport(data.classification_report)}
+                </div>
+                <div>
+                    <h3 class="font-bold mt-4">Confusion Matrix</h3>
+                    <img src="${data.confusion_matrix_url}" alt="Confusion Matrix" class="mt-2 rounded-lg shadow-md w-full"/>
+                </div>
+            `;
+        } catch (error) {
+            showError(resultsDiv, error.message);
+        }
+    }
+
+    async function predict() {
+        const advertising_spend = document.getElementById("advertising_spend").value;
+        const promotions = document.getElementById("promotions").value;
+        const holidays = document.getElementById("holidays").value;
+
+        if (!advertising_spend) {
+            showError(predictionResultEl, "Please enter a value for Advertising Spend.");
+            return;
+        }
+
+        predictionResultEl.innerText = "Predicting...";
+
+        try {
+            const res = await fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    advertising_spend: advertising_spend,
+                    promotions: promotions,
+                    holidays: holidays
+                })
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || 'Something went wrong');
+            }
+
+            const data = await res.json();
+            predictionResultEl.innerHTML = `Predicted Sales Volume: <span class="text-blue-600">${data.predicted_sales_volume}</span>`;
+
+        } catch (error) {
+            showError(predictionResultEl, error.message);
+        }
+    }
+</script>
+{% endblock %}
