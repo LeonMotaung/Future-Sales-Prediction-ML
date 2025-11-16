@@ -33,7 +33,9 @@ After training, the API returns:
 
 The `chart.png` visualizes the confusion matrix for the trained model.  
 
-The `model.png` shows all four model performances together (Random Forest, Naive Bayes, SVM, Logistic Regression) and highlights the confusion matrix comparison.
+The `model.png` shows all four model performances together (Random Forest, Naive Bayes, SVM, Logistic Regression) and highlights the confusion matrix comparison including the TCG model.
+
+---
 
 ### ✅ 3. Real-Time Prediction
 Users can input:
